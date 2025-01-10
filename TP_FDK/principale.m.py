@@ -14,7 +14,7 @@ F=np.array([[1,T_e,0,0],[0,1,0,0],[0,0,1,T_e],[0,0,0,1]])
 H=np.array([[1,0,0,0],[0,0,1,0]])
 Q=np.array([[T_e**3/3,T_e**2/2,0,0],[T_e**2/2,T_e,0,0],[0,0,T_e**3/3,T_e**2/2],[0,0,T_e**2/2,T_e]])*sigma_Q**2
 R=np.array([[sigma_px**2,0],[0,sigma_py**2]])
-#Test
+
 
 x_init=np.transpose(np.array([3,40,-4,20]))
 x_kalm=x_init
