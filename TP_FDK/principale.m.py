@@ -19,6 +19,9 @@ x_init=np.transpose(np.array([3,40,-4,20]))
 x_kalm=x_init
 P_kalm=np.eye(4)
 
+vecteur_y_avion_ligne = np.load('TP_FDK/data/vecteur_y_avion_ligne.npy')
+vecteur_y_avion_voltige = np.load('TP_FDK/data/vecteur_y_avion_voltige.npy')
+
 def creer_trajectoire(T,F,x_init,Q):
     x=np.zeros((4,T))
     x[:,0]=x_init
@@ -47,13 +50,16 @@ def filtre_de_Kalman(F,Q,H,R,y_k,x_kalm_prec,P_kalm_prec):
     #prediction
     x_pred=np.dot(F,x_kalm_prec)
     P_pred=np.dot(np.dot(F,P_kalm_prec),np.transpose(F))+Q
+    if np.isnan(y_k).any():
+        return x_pred, P_pred
+    else:
     #mise à jour
-    L=np.dot(H,np.dot(P_pred,np.transpose(H)))+R
-    K=np.dot(np.dot(P_pred,np.transpose(H)),np.linalg.inv(L))
-    y_tilde=y_k-np.dot(H,x_pred)
-    x_kalm_k=np.dot(F,x_pred)+np.dot(K,y_tilde)
-    P_kalm_k=P_pred-np.dot(np.dot(K,np.dot(np.dot(H,P_pred),np.transpose(H))+R),np.transpose(K))
-    return x_kalm_k,P_kalm_k
+        L=np.dot(H,np.dot(P_pred,np.transpose(H)))+R
+        K=np.dot(np.dot(P_pred,np.transpose(H)),np.linalg.inv(L))
+        y_tilde=y_k-np.dot(H,x_pred)
+        x_kalm_k=np.dot(F,x_pred)+np.dot(K,y_tilde)
+        P_kalm_k=P_pred-np.dot(np.dot(K,np.dot(np.dot(H,P_pred),np.transpose(H))+R),np.transpose(K))
+        return x_kalm_k,P_kalm_k
 
 x_est = np.zeros((4, T))
 
@@ -65,6 +71,8 @@ P_kalm_prec = P_kalm
 for k in range(1, T):
     x_kalm, P_kalm_prec = filtre_de_Kalman(F, Q, H, R, vecteur_y[:, k], x_est[:, k-1], P_kalm_prec)
     x_est[:, k] = x_kalm
+
+
 
 def err_quadra(k):
     err_quadra = np.dot(np.transpose(vecteur_x[:, k] - x_est[:, k]), vecteur_x[:, k] - x_est[:, k])
@@ -105,3 +113,5 @@ plt.ylabel('Position en ordonnée')
 plt.legend()
 plt.title('Trajectoires')
 plt.show()
+
+
