@@ -116,5 +116,8 @@ plt.title('Trajectoires')
 plt.show()
 
 
+distance = np.sqrt(px**2 + py**2)
+angle = np.arctan2(py, px)  # arctan2 est utilisé pour obtenir l'angle correct en tenant compte des signes de px et py
 
-
+print("Distance:", distance)
+print("Angle:", angle)
