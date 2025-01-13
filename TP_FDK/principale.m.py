@@ -44,27 +44,29 @@ plt.legend()
 plt.show()
 
 
-def filtre_de_Kalman(F,Q,H,R,y_k,x_kalm_prec,P_kalm_prec):
-    #prediction
-    x_pred=np.dot(F,x_kalm_prec)
-    P_pred=np.dot(np.dot(F,P_kalm_prec),np.transpose(F))+Q
-    #mise à jour
-    K=np.dot(F,np.dot(P_pred,np.transpose(H)))/(np.dot(H,(np.dot(P_pred,np.transpose(H))))+R)
-    y_tilde=y_k-np.dot(H,x_pred)
-    x_kalm_k=np.dot(F,x_pred)+np.dot(K,y_tilde)
-    P_kalm_k=P_pred-np.dot(np.dot(K,np.dot(np.dot(H,P_pred),np.transpose(H))+R),np.transpose(K))
-    return x_kalm_k,P_kalm_k
+def filtre_de_Kalman(F, Q, H, R, y_k, x_pred, P_pred):
+    # Calcul du gain de Kalman
+    K = np.dot(P_pred, np.transpose(H)) @ np.linalg.inv(np.dot(H, np.dot(P_pred, np.transpose(H))) + R)
+    # Innovation ou résidu
+    y_tilde = y_k - np.dot(H, x_pred)
+    # Mise à jour de l'estimation de l'état
+    x_kalm_k = x_pred + np.dot(K, y_tilde)
+    # Mise à jour de la covariance de l'erreur
+    P_kalm_k = P_pred - np.dot(K, np.dot(H, P_pred))
+    return x_kalm_k, P_kalm_k
 
-x_est=np.zeros((4,T))
-x_est[:,0]=x_init
-for i in range (1,T):
-    x_est[:,i],P_kalm=filtre_de_Kalman(F,Q,H,R,vecteur_y[:,i],x_est[:,i-1],P_kalm)
+x_est = np.zeros((4, T))
+x_est[:, 0] = x_init
+P_kalm = np.eye(4)  # Initialisation de la covariance de l'erreur
+
+for i in range(1, T):
+    x_est[:, i], P_kalm = filtre_de_Kalman(F, Q, H, R, vecteur_y[:, i], x_est[:, i-1], P_kalm)
 
 def err_quadra(k):
-    err_quadra=np.dot(np.transpose(vecteur_x[:,k]-x_est[:,k]),vecteur_x[:,k]-x_est[:,k])
+    err_quadra = np.dot(np.transpose(vecteur_x[:, k] - x_est[:, k]), vecteur_x[:, k] - x_est[:, k])
     return err_quadra
 
-err_moyenne=T**(-1)*np.sum([err_quadra(k) for k in range(T)])
+err_moyenne = T**(-1) * np.sum([err_quadra(k) for k in range(T)])
 
 plt.figure()
 plt.plot(range(T), vecteur_x[0, :], label='Position vraie (abscisse)')
