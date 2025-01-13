@@ -5,15 +5,16 @@ import matplotlib.pyplot as plt
 T_e=1
 T=100
 sigma_Q=1
-sigma_py=30
-sigma_px=30
+sigma_dist=10
+sigma_angle=np.pi/180
 k=1000
+
 
 #paramètres du filtre
 F=np.array([[1,T_e,0,0],[0,1,0,0],[0,0,1,T_e],[0,0,0,1]])
 H=np.array([[1,0,0,0],[0,0,1,0]])
 Q=np.array([[T_e**3/3,T_e**2/2,0,0],[T_e**2/2,T_e,0,0],[0,0,T_e**3/3,T_e**2/2],[0,0,T_e**2/2,T_e]])*sigma_Q**2
-R=np.array([[sigma_px**2,0],[0,sigma_py**2]])
+R=np.array([[sigma_angle**2,0],[0,sigma_dist**2]])
 
 x_init=np.transpose(np.array([3,40,-4,20]))
 x_kalm=x_init
@@ -38,7 +39,7 @@ vecteur_x=creer_trajectoire(T,F,x_init, Q)
 def creer_observations(H,R,vecteur_x,T):
     y=np.zeros((2,T))
     for i in range(0,T):
-        y[:,i]=np.dot(H,vecteur_x[:,i])+np.random.multivariate_normal(np.zeros(2),R)
+        y[:,i]=np.array([np.sqrt(vecteur_x[:,i][0]**2+vecteur_x[:,i][2]**2),np.arctan2(vecteur_x[:,i][2],vecteur_x[:,i][0])])+np.random.multivariate_normal(np.zeros(2),R)
     return y
 
 vecteur_y=creer_observations(H,R,vecteur_x,T)
@@ -114,10 +115,3 @@ plt.ylabel('Position en ordonnée')
 plt.legend()
 plt.title('Trajectoires')
 plt.show()
-
-
-distance = np.sqrt(px**2 + py**2)
-angle = np.arctan2(py, px)  # arctan2 est utilisé pour obtenir l'angle correct en tenant compte des signes de px et py
-
-print("Distance:", distance)
-print("Angle:", angle)
