@@ -22,8 +22,8 @@ Q = np.array([[T_e ** 3 / 3, T_e ** 2 / 2, 0, 0],
               [0, 0, T_e ** 3 / 3, T_e ** 2 / 2],
               [0, 0, T_e ** 2 / 2, T_e]]) * sigma_Q ** 2
 
-R = np.array([[sigma_angle ** 2, 0],
-              [0, sigma_dist ** 2]])
+R = np.array([[sigma_dist ** 2, 0],
+              [0, sigma_angle ** 2]])
 
 # Initialization
 P_kalm = np.diag([100, 10, 100, 10])
