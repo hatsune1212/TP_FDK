@@ -19,12 +19,6 @@ x_init=np.transpose(np.array([3,40,-4,20]))
 x_kalm=x_init
 P_kalm=np.eye(4)
 
-vecteur_y_avion_ligne = np.load('TP_FDK/data/vecteur_y_avion_ligne.npy')
-vecteur_y_avion_voltige = np.load('TP_FDK/data/vecteur_y_avion_voltige.npy')
-vecteur_x_avion_ligne = np.load('TP_FDK/data/vecteur_x_avion_ligne.npy')
-vecteur_x_avion_voltige = np.load('TP_FDK/data/vecteur_x_avion_voltige.npy')
-print(len(vecteur_y_avion_ligne))
-print(len(vecteur_y_avion_voltige))
 
 def creer_trajectoire(T,F,x_init,Q):
     x=np.zeros((4,T))
