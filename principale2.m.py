@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # Model parameters
 T_e = 1
 T = 100
-sigma_Q = 1
+sigma_Q = 10
 sigma_dist = 10
 sigma_angle = np.pi / 180
 
@@ -27,7 +27,7 @@ R = np.array([[sigma_angle ** 2, 0],
               [0, sigma_dist ** 2]])
 
 # Initialization
-P_kalm = np.eye(4)
+P_kalm = np.diag([100, 10, 100, 10])
 
 vecteur_y_avion_ligne = np.load('data/vecteur_y_avion_ligne.npy')
 vecteur_y_avion_voltige = np.load('data/vecteur_y_avion_voltige.npy')
@@ -41,7 +41,7 @@ print(len(vecteur_y_avion_voltige))
 
 def creer_observations_radar(R, vecteur_x, T):
     y = np.zeros((2, T))
-    for i in range(0, T):
+    for i in range(T):
         distance = np.sqrt(vecteur_x[0, i] ** 2 + vecteur_x[2, i] ** 2)
         angle = np.arctan2(vecteur_x[2, i], vecteur_x[0, i])
         bruit = np.random.multivariate_normal(np.zeros(2), R)
@@ -57,24 +57,19 @@ def filtre_de_Kalman_radar(F, Q, R, y_k, x_kalm_prec, P_kalm_prec):
     # Prediction
     x_pred = np.dot(F, x_kalm_prec)
     P_pred = np.dot(F, np.dot(P_kalm_prec, F.T)) + Q
-
     # Skip update if observation is missing
     if np.isnan(y_k).any():
         return x_pred, P_pred
-
     # Update step
     H = np.array([[x_pred[0]/np.sqrt(x_pred[0] ** 2 + x_pred[2] ** 2), 0,
                    x_pred[2]/np.sqrt(x_pred[0] ** 2 + x_pred[2] ** 2), 0],
                   [-x_pred[2]/(x_pred[0] ** 2 + x_pred[2] ** 2), 0, x_pred[0] / (x_pred[0] ** 2 + x_pred[2] ** 2),
                    0]])
-
     L = np.dot(H, np.dot(P_pred, H.T)) + R
     K = np.dot(P_pred, np.dot(H.T, np.linalg.inv(L)))
-
     y_tilde = y_k - np.array([np.sqrt(x_pred[0] ** 2 + x_pred[2] ** 2), np.arctan2(x_pred[2], x_pred[0])])
     x_kalm_k = x_pred + np.dot(K, y_tilde)
     P_kalm_k = P_pred - np.dot(K, np.dot(L, K.T))
-
     return x_kalm_k, P_kalm_k
 
 
@@ -248,6 +243,20 @@ plt.scatter(cartesienne(vecteur_y_radar_voltige)[0,:], cartesienne(vecteur_y_rad
 plt.legend()
 plt.xlabel('X position')
 plt.ylabel('Y position')
-plt.title('Kalman Filter Radar Tracking')
+plt.title('Kalman Filter Radar Tracking (Voltige)')
+plt.grid()
+plt.show()
+
+plt.figure(figsize=(10, 6))
+plt.plot(x_est_ligne[0, :], x_est_ligne[2, :], label='Estimated Trajectory (Line)', color='b')
+plt.plot(vecteur_x_avion_ligne[0, :], vecteur_x_avion_ligne[2, :], label='True Trajectory (Line)', color='g',
+         linestyle='--')
+plt.scatter(cartesienne(vecteur_y_radar_ligne)[0,:], cartesienne(vecteur_y_radar_ligne)[1,:], label='Radar Observations (Line)', color='r',
+            s=10)
+
+plt.legend()
+plt.xlabel('X position')
+plt.ylabel('Y position')
+plt.title('Kalman Filter Radar Tracking (ligne)')
 plt.grid()
 plt.show()
