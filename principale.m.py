@@ -119,9 +119,6 @@ vecteur_x_avion_voltige = np.transpose(np.load('data/vecteur_x_avion_voltige.npy
 x_init_ligne = vecteur_x_avion_ligne[:, 0]
 x_init_voltige = vecteur_x_avion_voltige[:, 0]
 
-P_kalm_ligne = np.eye(4)
-P_kalm_voltige = np.eye(4)
-
 T_ligne = vecteur_y_avion_ligne.shape[0]
 T_voltige = vecteur_y_avion_voltige.shape[0]
 
@@ -131,8 +128,8 @@ x_est_voltige = np.zeros((4, T_voltige))
 x_est_ligne[:, 0] = x_init_ligne
 x_est_voltige[:, 0] = x_init_voltige
 
-P_kalm_prec_ligne = P_kalm_ligne
-P_kalm_prec_voltige = P_kalm_voltige
+P_kalm_prec_ligne = P_kalm
+P_kalm_prec_voltige = P_kalm
 
 # Estimer les états cachés pour l'avion de ligne
 for k in range(1, T_ligne):
