@@ -109,6 +109,60 @@ plt.legend()
 plt.title('Trajectoires')
 plt.show()
 
+# Charger les vecteurs d'observations pour les deux types d'avions
+vecteur_y_avion_ligne = np.load('data/vecteur_y_avion_ligne.npy')
+vecteur_y_avion_voltige = np.load('data/vecteur_y_avion_voltige.npy')
+vecteur_x_avion_ligne = np.transpose(np.load('data/vecteur_x_avion_ligne.npy'))
+vecteur_x_avion_voltige = np.transpose(np.load('data/vecteur_x_avion_voltige.npy'))
 
+# Initialiser les états et les matrices de covariance pour chaque type d'avion
+x_init_ligne = vecteur_x_avion_ligne[:, 0]
+x_init_voltige = vecteur_x_avion_voltige[:, 0]
 
+P_kalm_ligne = np.eye(4)
+P_kalm_voltige = np.eye(4)
+
+T_ligne = vecteur_y_avion_ligne.shape[0]
+T_voltige = vecteur_y_avion_voltige.shape[0]
+
+x_est_ligne = np.zeros((4, T_ligne))
+x_est_voltige = np.zeros((4, T_voltige))
+
+x_est_ligne[:, 0] = x_init_ligne
+x_est_voltige[:, 0] = x_init_voltige
+
+P_kalm_prec_ligne = P_kalm_ligne
+P_kalm_prec_voltige = P_kalm_voltige
+
+# Estimer les états cachés pour l'avion de ligne
+for k in range(1, T_ligne):
+    x_kalm, P_kalm_prec_ligne = filtre_de_Kalman(F, Q, H, R, vecteur_y_avion_ligne[k, :], x_est_ligne[:, k-1], P_kalm_prec_ligne)
+    x_est_ligne[:, k] = x_kalm
+
+# Estimer les états cachés pour l'avion de voltige
+for k in range(1, T_voltige):
+    x_kalm, P_kalm_prec_voltige = filtre_de_Kalman(F, Q, H, R, vecteur_y_avion_voltige[k, :], x_est_voltige[:, k-1], P_kalm_prec_voltige)
+    x_est_voltige[:, k] = x_kalm
+
+# Tracer les trajectoires estimées pour l'avion de ligne
+plt.figure()
+plt.plot(vecteur_x_avion_ligne[0, :], vecteur_x_avion_ligne[2, :], label='Trajectoire vraie (ligne)')
+plt.plot(x_est_ligne[0, :], x_est_ligne[2, :], label='Trajectoire estimée (ligne)')
+plt.plot(vecteur_y_avion_ligne[:, 0], vecteur_y_avion_ligne[:, 1], 'ro', label='Trajectoire observée (ligne)')
+plt.xlabel('Position en abscisse')
+plt.ylabel('Position en ordonnée')
+plt.legend()
+plt.title('Trajectoire de l\'avion de ligne')
+plt.show()
+
+# Tracer les trajectoires estimées pour l'avion de voltige
+plt.figure()
+plt.plot(vecteur_x_avion_voltige[0, :], vecteur_x_avion_voltige[2, :], label='Trajectoire vraie (voltige)')
+plt.plot(x_est_voltige[0, :], x_est_voltige[2, :], label='Trajectoire estimée (voltige)')
+plt.plot(vecteur_y_avion_voltige[:, 0], vecteur_y_avion_voltige[:, 1], 'ro', label='Trajectoire observée (voltige)')
+plt.xlabel('Position en abscisse')
+plt.ylabel('Position en ordonnée')
+plt.legend()
+plt.title('Trajectoire de l\'avion de voltige')
+plt.show()
 
