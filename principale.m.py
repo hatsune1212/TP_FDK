@@ -163,3 +163,22 @@ plt.legend()
 plt.title('Trajectoire de l\'avion de voltige')
 plt.show()
 
+def mse(vecteur_x, x_est, T):
+    return T**(-1) * np.sum([np.dot(np.transpose(vecteur_x[:, k] - x_est[:, k]), vecteur_x[:, k] - x_est[:, k]) for k in range(T)])
+
+mse_ligne = mse(vecteur_x_avion_ligne, x_est_ligne, T_ligne)
+mse_voltige = mse(vecteur_x_avion_voltige, x_est_voltige, T_voltige)
+
+# Print the MSE values
+print(f"MSE for airliner: {mse_ligne}")
+print(f"MSE for aerobatic plane: {mse_voltige}")
+
+# Visualize the MSE results using a bar chart
+labels = ['Avion de ligne', 'Avion de voltige']
+mse_values = [mse_ligne, mse_voltige]
+
+plt.figure()
+plt.bar(labels, mse_values, color=['blue', 'orange'])
+plt.ylabel('Erreur moyenne')
+plt.title('Erreur moyenne en fonction de lavion')
+plt.show()

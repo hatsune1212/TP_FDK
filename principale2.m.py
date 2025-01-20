@@ -100,39 +100,39 @@ for k in range(1, T):
 
 
 def cartesienne(y):
-    x = np.zeros((2, y.shape[1]))# Ensure dimensions align with y
+    x = np.zeros((2, y.shape[1]))# on s'assure d'avoir les bonnes dimensions
     for i in range(y.shape[1]):
         distance = y[0, i]
         angle = y[1, i]
-        x[0, i] = distance * np.cos(angle)  # X-coordinate
-        x[1, i] = distance * np.sin(angle)  # Y-coordinate
+        x[0, i] = distance * np.cos(angle) 
+        x[1, i] = distance * np.sin(angle)  
     return x
 
 # Plot les trajectoires
 plt.figure(figsize=(10, 6))
-plt.plot(x_est_voltige[0, :], x_est_voltige[2, :], label='trajectoire est (Line)', color='b')
-plt.plot(vecteur_x_avion_voltige[0, :], vecteur_x_avion_voltige[2, :], label='vraie trajectoire (Line)', color='g',
+plt.plot(x_est_voltige[0, :], x_est_voltige[2, :], label='trajectoire estimée (voltige)', color='b')
+plt.plot(vecteur_x_avion_voltige[0, :], vecteur_x_avion_voltige[2, :], label='vraie trajectoire (voltige)', color='g',
          linestyle='--')
-plt.scatter(cartesienne(vecteur_y_radar_voltige)[0,:], cartesienne(vecteur_y_radar_voltige)[1,:], label='observations radar (Line)', color='r',
+plt.scatter(cartesienne(vecteur_y_radar_voltige)[0,:], cartesienne(vecteur_y_radar_voltige)[1,:], label='observations radar (voltige)', color='r',
             s=10)
 
 plt.legend()
 plt.xlabel('X')
 plt.ylabel('Y')
-plt.title('Kalman Filter Radar (Voltige)')
+plt.title('Filtre de Kalman radar (Voltige)')
 plt.grid()
 plt.show()
 
 plt.figure(figsize=(10, 6))
-plt.plot(x_est_ligne[0, :], x_est_ligne[2, :], label='trajectoire est (Line)', color='b')
-plt.plot(vecteur_x_avion_ligne[0, :], vecteur_x_avion_ligne[2, :], label='vraie trajectoire (Line)', color='g',
+plt.plot(x_est_ligne[0, :], x_est_ligne[2, :], label='trajectoire estimée (ligne)', color='b')
+plt.plot(vecteur_x_avion_ligne[0, :], vecteur_x_avion_ligne[2, :], label='vraie trajectoire (ligne)', color='g',
          linestyle='--')
-plt.scatter(cartesienne(vecteur_y_radar_ligne)[0,:], cartesienne(vecteur_y_radar_ligne)[1,:], label='observations radar (Line)', color='r',
+plt.scatter(cartesienne(vecteur_y_radar_ligne)[0,:], cartesienne(vecteur_y_radar_ligne)[1,:], label='observations radar (ligne)', color='r',
             s=10)
 
 plt.legend()
 plt.xlabel('X')
 plt.ylabel('Y')
-plt.title('Kalman Filter Radar (ligne)')
+plt.title('Filtre de Kalman radar (ligne)')
 plt.grid()
 plt.show()
