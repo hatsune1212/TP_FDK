@@ -76,7 +76,6 @@ def err_quadra(k):
 
 err_moyenne = T**(-1) * np.sum([err_quadra(k) for k in range(T)])
 
-# Tracer la position vraie, estimée et observée en abscisse en fonction du temps
 plt.figure()
 plt.plot(range(T), vecteur_x[0, :], label='Position vraie (abscisse)')
 plt.plot(range(T), x_est[0, :], label='Position estimée (abscisse)')
@@ -87,7 +86,6 @@ plt.legend()
 plt.title('Position en abscisse en fonction du temps')
 plt.show()
 
-# Tracer la position vraie, estimée et observée en ordonnée en fonction du temps
 plt.figure()
 plt.plot(range(T), vecteur_x[2, :], label='Position vraie (ordonnée)')
 plt.plot(range(T), x_est[2, :], label='Position estimée (ordonnée)')
@@ -98,7 +96,6 @@ plt.legend()
 plt.title('Position en ordonnée en fonction du temps')
 plt.show()
 
-# Tracer la vraie trajectoire, la trajectoire observée et la trajectoire estimée par le filtre de Kalman
 plt.figure()
 plt.plot(vecteur_x[0, :], vecteur_x[2, :], label='Trajectoire vraie')
 plt.plot(x_est[0, :], x_est[2, :], label='Trajectoire estimée')
@@ -109,13 +106,12 @@ plt.legend()
 plt.title('Trajectoires')
 plt.show()
 
-# Charger les vecteurs d'observations pour les deux types d'avions
+
 vecteur_y_avion_ligne = np.load('data/vecteur_y_avion_ligne.npy')
 vecteur_y_avion_voltige = np.load('data/vecteur_y_avion_voltige.npy')
 vecteur_x_avion_ligne = np.transpose(np.load('data/vecteur_x_avion_ligne.npy'))
 vecteur_x_avion_voltige = np.transpose(np.load('data/vecteur_x_avion_voltige.npy'))
 
-# Initialiser les états et les matrices de covariance pour chaque type d'avion
 x_init_ligne = vecteur_x_avion_ligne[:, 0]
 x_init_voltige = vecteur_x_avion_voltige[:, 0]
 
@@ -131,12 +127,10 @@ x_est_voltige[:, 0] = x_init_voltige
 P_kalm_prec_ligne = P_kalm
 P_kalm_prec_voltige = P_kalm
 
-# Estimer les états cachés pour l'avion de ligne
 for k in range(1, T_ligne):
     x_kalm, P_kalm_prec_ligne = filtre_de_Kalman(F, Q, H, R, vecteur_y_avion_ligne[k, :], x_est_ligne[:, k-1], P_kalm_prec_ligne)
     x_est_ligne[:, k] = x_kalm
 
-# Estimer les états cachés pour l'avion de voltige
 for k in range(1, T_voltige):
     x_kalm, P_kalm_prec_voltige = filtre_de_Kalman(F, Q, H, R, vecteur_y_avion_voltige[k, :], x_est_voltige[:, k-1], P_kalm_prec_voltige)
     x_est_voltige[:, k] = x_kalm
@@ -169,11 +163,9 @@ def mse(vecteur_x, x_est, T):
 mse_ligne = mse(vecteur_x_avion_ligne, x_est_ligne, T_ligne)
 mse_voltige = mse(vecteur_x_avion_voltige, x_est_voltige, T_voltige)
 
-# Print the MSE values
 print(f"MSE for airliner: {mse_ligne}")
 print(f"MSE for aerobatic plane: {mse_voltige}")
 
-# Visualize the MSE results using a bar chart
 labels = ['Avion de ligne', 'Avion de voltige']
 mse_values = [mse_ligne, mse_voltige]
 
